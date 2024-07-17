@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
+    <style>
+        body{
+            background: #00f;
+        }
+        header h3{
+            font-size: 33px;
+            font-family: cursive, Arial, Helvetica, sans-serif;
+        }
+        .scores{
+            display: flex;
+        }
+        .scores div{
+            flex: 1;
+            text-align: center;
+            color: white;
+            text-transform: capitalize;
+            font-family: cursive,Arial, Helvetica, sans-serif;
+        }
+        .player h6, .computer h6{
+            font-size: 20px;
+        }
+        button{
+            padding: 10px;
+            width: 100px;
+            outline: none;
+            background: #000;
+            color: blue;
+            border: none;
+            border-radius: 10px;
+        }
+        button:hover{
+            color:black;
+            background: blue;
+            outline:2px solid black;
+            text-transform: capitalize;
+        }
+
+        li{
+            list-style: none;
+        }
+        .winner{
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(1.3);
+            z-index: 10;
+        }
+        .overlay{
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5);
+            display: none;
+        }
+        .history{
+            max-height: 200px;
+            overflow: scroll;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h3 class="text-center fw-bolder p-3 text-white-50"> Rock , Paper, Scissor</h3>
+    </header>
+    <div class="scores">
+        <div class="player">
+            <h6> <div class="bi-person-fill"></div>Player 1</h6>
+            <span class="score-player">0</span>
+        </div>
+        <div class="tie-">
+            <h6>Tie</h6>
+            <span class="tie">0</span>
+        </div>
+        <div class="computer">
+            <h6><div class="bi-android"></div> computer</h6>
+            <span class="score-computer">0</span>
+        </div>
+    </div>
+
+    <div class="title d-flex flex-column align-items-center fw-bold text-white my-5">
+        Choose your move
+        <div class="move-left">
+            Moves left: <span class="move-left-count text-danger">10</span>
+        </div>
+    </div>
+
+    <div class="buttons d-flex justify-content-center align-items-center">
+        <button>rock</button>
+        <button class="mx-3">paper</button>
+        <button>scissor</button>
+    </div>
+
+    <div class="winner  py-4 text-white text-capitalize text-center">
+        
+    </div>
+    
+    <h3 class="text-center py-3 text-white">
+        <i class="bi-clock"></i> History
+    </h3>
+    <div class="history d-flex justify-content-center text-white ">
+        <ul class="player-history-">
+            <li class="fw-bolder">
+                Player 1
+            </li>
+            <li>
+                <ul class="player-history">
+                    
+                </ul>
+            </li>
+            
+        </ul>
+        <ul class="computer-history-">
+            <li class="fw-bolder">
+                Computer
+            </li>
+            <li>
+                <ul class="computer-history">
+                
+                </ul>
+            </li>
+        
+        </ul>
+    </div>
+    
+
+    <div class="overlay"></div>
+
+
+    <script>
+        function game(){
+            let btns = document.querySelectorAll("button")
+            let computerOption =["rock", "paper", "scissor"]
+            let moves = 0
+            btns.forEach(option => {
+                option.addEventListener("click", (e) =>{
+                    // console.log(e.target.textContent)
+                    let computer_option = Math.floor(Math.random() * 3)
+                    // console.log(computerOption[computer_option])
+                    let move_left = document.querySelector(".move-left-count")
+                    moves++
+                    move_left.innerHTML = 10 - moves
+
+                    winner(moves, e.target.textContent, computerOption[computer_option])
+
+                    if(moves < 0){
+                        moves = 0
+                    }
+                    
+                })
+            });
+        }
+
+        let playerHistory = []
+        let computerHistory = []
+        let playerScore = 0
+        let computerScore = 0
+        let tie = 0
+
+        let playerHistoryDisplay =  document.querySelector(".player-history")
+        let computerHistoryDisplay =  document.querySelector(".computer-history")
+
+        function winner(moves, playerChioce, computerChoice){
+            
+            playerHistory.push(playerChioce)
+            computerHistory.push(computerChoice)
+
+            playerHistoryDisplay.innerHTML = playerHistory.map(e=>{
+                return `
+                <li>
+                ${e}
+                </li>
+                ` 
+            }).join("")
+
+            computerHistoryDisplay.innerHTML = computerHistory.map(e=>{
+                return `
+                <li>
+                ${e}
+                </li>
+                ` 
+            }).join("")
+
+            let scorePlayer = document.querySelector(".score-player")
+            let scoreComputer = document.querySelector(".score-computer")
+
+            if(playerChioce == "rock" && computerChoice == "scissor"){
+                playerScore += 1
+                scorePlayer.textContent = playerScore
+                
+            }
+
+            if(playerChioce == "scissor" && computerChoice == "paper"){
+                playerScore += 1
+                scorePlayer.textContent = playerScore
+                
+            }
+
+            if(playerChioce == "paper" && computerChoice == "rock"){
+                playerScore += 1
+                scorePlayer.textContent = playerScore
+                
+            }
+
+            if(computerChoice == "rock" && playerChioce == "scissor"){
+                computerScore += 1
+                scoreComputer.textContent = computerScore
+                
+            }
+
+            if(computerChoice == "scissor" &&  playerChioce == "paper"){
+                computerScore += 1
+                scoreComputer.textContent = computerScore
+                
+            }
+
+            if(computerChoice  == "paper" && playerChioce == "rock"){
+                computerScore += 1
+                scoreComputer.textContent = computerScore
+                
+            }
+
+            if(computerChoice == playerChioce){
+                tie += 1
+                document.querySelector(".tie").textContent = tie 
+            }
+
+            if(moves === 10){
+                gameOver(moves, playerScore, computerScore)
+            }
+
+        }
+        game()
+
+        function gameOver(moves, playerGameScore, computerGameScore){
+            let winner_txt = document.querySelector(".winner")
+            if(playerGameScore > computerGameScore){
+                winner_txt.innerHTML = "<h2>Game Over !!!</h2>Player 1 won</br> <button onclick='restart()'>Restart</button>"
+                document.querySelector(".overlay").style.display="block"
+            }
+
+            if(playerGameScore < computerGameScore){
+                winner_txt.innerHTML = "<h2>Game Over !!!</h2>computer won </br> <button onclick='restart()'>Restart</button>"
+                document.querySelector(".overlay").style.display="block"
+            }
+            if(playerGameScore == computerGameScore){
+                
+                winner_txt.innerHTML = "<h2>Game Over !!!</h2> Tied<br><button onclick='restart()'>Restart</button>"
+                document.querySelector(".overlay").style.display="block"
+            }
+        }
+
+        function restart(){
+            window.location.href ="/"
+        }
+    </script>
+</body>
+</html>
